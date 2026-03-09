@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable", "WebWorker"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@emi": ["../native/external-media-integration"],
+      "@native/*": ["../native/*"],
+      "@opencc": ["../native/ferrous-opencc-wasm/pkg"],
+      "@shared": ["./src/types/shared"]
+    },
+    "types": [
+      "node",
+      "@cloudflare/workers-types",
+      "./auto-imports.d.ts",
+      "./components.d.ts"
+    ]
+  },
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "functions/**/*.ts"]
+}

@@ -1,0 +1,6 @@
+name = "splayer-web-cloudflare"
+compatibility_date = "2026-03-09"
+pages_build_output_dir = "./dist"
+
+[vars]
+NETEASE_API_URL = ""

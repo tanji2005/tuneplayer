@@ -4,6 +4,11 @@
       <n-text class="keyword">{{ searchKeyword }}</n-text>
       <n-text depth="3">的相关搜索</n-text>
     </div>
+    <n-radio-group v-model:value="searchPlatform" class="platforms" @update:value="platformChange">
+      <n-radio-button value="all">全部</n-radio-button>
+      <n-radio-button value="netease">网易云</n-radio-button>
+      <n-radio-button value="kuwo">酷我</n-radio-button>
+    </n-radio-group>
     <!-- 标签页 -->
     <n-tabs v-model:value="searchType" class="tabs" type="segment" @update:value="tabChange">
       <n-tab name="search-songs"> 单曲 </n-tab>
@@ -39,6 +44,7 @@ const settingStore = useSettingStore();
 
 // 搜索关键词
 const searchKeyword = computed(() => route.query.keyword as string);
+const searchPlatform = ref<"all" | "netease" | "kuwo">("all");
 
 // 搜索分类
 const searchType = ref<string>("search-songs");
@@ -49,6 +55,17 @@ const tabChange = (value: string) => {
     name: value,
     query: {
       keyword: searchKeyword.value,
+      platform: searchPlatform.value,
+    },
+  });
+};
+
+const platformChange = (value: "all" | "netease" | "kuwo") => {
+  router.push({
+    name: searchType.value,
+    query: {
+      keyword: searchKeyword.value,
+      platform: value,
     },
   });
 };
@@ -60,6 +77,9 @@ watch(
     if (name && name.toString().startsWith("search-")) {
       searchType.value = name as string;
     }
+    const platform = String(route.query.platform || "all");
+    searchPlatform.value =
+      platform === "netease" || platform === "kuwo" ? platform : "all";
   },
   { immediate: true },
 );
@@ -83,6 +103,9 @@ watch(
     .n-text {
       display: inline-block;
     }
+  }
+  .platforms {
+    margin-bottom: 12px;
   }
   .router-view {
     flex: 1;

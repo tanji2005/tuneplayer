@@ -72,6 +72,36 @@ export const unlockSongUrl = (id: number, keyword: string, server: SongUnlockSer
   });
 };
 
+// 获取聚合源歌词
+export const songLyricBySource = async (
+  id: number,
+  platform: "netease" | "kuwo",
+  quality: "128k" | "320k" | "flac" | "flac24bit" = "320k",
+) => {
+  const result = await request({
+    baseURL: "/api/tunehub",
+    url: "/parse",
+    method: "post",
+    data: {
+      platform,
+      ids: String(id),
+      quality,
+    },
+  });
+
+  const parsed = Array.isArray(result?.data) ? result.data[0] : result?.data;
+  if (!parsed?.success) {
+    return { code: 404 };
+  }
+
+  return {
+    code: 200,
+    lrc: {
+      lyric: parsed.lyrics || "",
+    },
+  };
+};
+
 // 获取歌曲歌词
 export const songLyric = (id: number) => {
   return request({

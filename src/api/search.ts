@@ -63,6 +63,7 @@ export const searchResult = (
   limit: number = 50,
   offset = 0,
   type: SearchTypes = SearchTypes.All,
+  platform: "all" | "netease" | "kuwo" = "all",
 ) => {
   return request({
     baseURL: "/api/search",
@@ -72,6 +73,7 @@ export const searchResult = (
       limit,
       offset,
       type,
+      platform,
     },
   });
 };

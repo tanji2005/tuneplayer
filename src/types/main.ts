@@ -48,6 +48,7 @@ export enum QualityType {
 export type AudioSourceType =
   | "official"
   | "netease"
+  | "qq"
   | "kuwo"
   | "bodian"
   | "gequbao"
@@ -127,6 +128,8 @@ export type SongType = {
   source?: "streaming";
   /** 标记 */
   mark?: number;
+  /** 聚合来源平台 */
+  sourcePlatform?: "netease" | "kuwo";
   /** ReplayGain 信息 */
   replayGain?: ReplayGainType;
 };

@@ -21,6 +21,7 @@ import { openUserLogin } from "@/utils/modal";
  */
 export enum SongUnlockServer {
   NETEASE = "netease",
+  QQ = "qq",
   BODIAN = "bodian",
   KUWO = "kuwo",
   GEQUBAO = "gequbao",
@@ -425,7 +426,14 @@ class SongManager {
       const songId = nextSong.type === "radio" ? nextSong.dj?.id : nextSong.id;
       if (!songId) return;
       // 是否可解锁
-      const canUnlock = isElectron && nextSong.type !== "radio" && settingStore.useSongUnlock;
+      const canUnlock = nextSong.type !== "radio" && settingStore.useSongUnlock;
+      if (nextSong.sourcePlatform && canUnlock) {
+        const unlockUrl = await this.getUnlockSongUrl(nextSong, nextSong.sourcePlatform);
+        if (unlockUrl.url) {
+          this.nextPrefetch = unlockUrl;
+          return unlockUrl;
+        }
+      }
       // 先请求官方地址
       const { url: officialUrl, isTrial, quality } = await this.getOnlineUrl(songId, false);
       if (officialUrl && !isTrial) {
@@ -526,7 +534,15 @@ class SongManager {
     // 在线获取
     try {
       // 是否可解锁
-      const canUnlock = isElectron && song.type !== "radio" && settingStore.useSongUnlock;
+      const canUnlock = song.type !== "radio" && settingStore.useSongUnlock;
+
+      if (song.sourcePlatform && canUnlock && (!forceSource || forceSource === "auto")) {
+        const unlockUrl = await this.getUnlockSongUrl(song, song.sourcePlatform);
+        if (unlockUrl.url) {
+          console.log(`🔓 [${songId}] 聚合源解锁成功: ${song.sourcePlatform}`, unlockUrl);
+          return unlockUrl;
+        }
+      }
 
       // 如果指定了非官方源，直接走解锁流程
       if (forceSource && forceSource !== "auto") {

@@ -154,7 +154,10 @@ const toSearch = async (key: any, type: string = "keyword") => {
     case "keyword":
       router.push({
         name: "search",
-        query: { keyword: key },
+        query: {
+          keyword: key,
+          ...(route.query.platform ? { platform: route.query.platform } : {}),
+        },
       });
       setSearchHistory(key);
       break;

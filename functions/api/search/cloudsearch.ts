@@ -9,6 +9,8 @@ import {
   type CloudflareEnv,
 } from "../../_utils";
 
+type SearchPlatform = "netease" | "kuwo";
+
 export const onRequestGet: PagesFunction<CloudflareEnv> = async (context) => {
   try {
     const url = new URL(context.request.url);
@@ -16,18 +18,19 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async (context) => {
     const limit = Number(url.searchParams.get("limit") || "20");
     const offset = Number(url.searchParams.get("offset") || "0");
     const type = Number(url.searchParams.get("type") || "1");
+    const platform = (url.searchParams.get("platform") || "all") as "all" | SearchPlatform;
 
     if (!keywords) {
       return createErrorResponse("缺少 keywords 参数");
     }
 
     const page = Math.floor(offset / Math.max(limit, 1)) + 1;
-    const [neteaseSongs, kuwoSongs] = await Promise.all([
-      searchSongs(context.env, "netease", keywords, page, limit).catch(() => []),
-      searchSongs(context.env, "kuwo", keywords, page, limit).catch(() => []),
-    ]);
+    const platforms: SearchPlatform[] = platform === "all" ? ["netease", "kuwo"] : [platform];
+    const searchResults = await Promise.all(
+      platforms.map((item) => searchSongs(context.env, item, keywords, page, limit).catch(() => [])),
+    );
 
-    const mergedSongs = mergeSearchSongs([...neteaseSongs, ...kuwoSongs]).slice(0, limit);
+    const mergedSongs = mergeSearchSongs(searchResults.flat()).slice(0, limit);
 
     if (type === 1 || type === 1018) {
       return createJsonResponse({

@@ -274,6 +274,12 @@ export const mergeSearchSongs = (songs: SearchSong[]) => {
 };
 
 export const toSongSearchResult = (songs: SearchSong[]) => {
+  const platformLabelMap = {
+    netease: "网易云",
+    kuwo: "酷我",
+    qq: "QQ",
+  } satisfies Record<SearchSong["platform"], string>;
+
   return songs.map((song) => ({
     id: Number(song.id),
     name: song.name,
@@ -286,6 +292,7 @@ export const toSongSearchResult = (songs: SearchSong[]) => {
       name: song.album || "未知专辑",
     },
     dt: 0,
+    alia: [`[${platformLabelMap[song.platform]}]`],
     sourcePlatform: song.platform,
   }));
 };

@@ -28,6 +28,7 @@
 import type { SongType } from "@/types/main";
 import { searchResult } from "@/api/search";
 import { formatSongsList } from "@/utils/format";
+const route = useRoute();
 
 const props = defineProps<{
   keyword: string;
@@ -39,12 +40,16 @@ const loading = ref<boolean>(true);
 const searchOffset = ref<number>(0);
 const searchCount = ref<number>(1);
 const searchResultData = ref<SongType[]>([]);
+const searchPlatform = computed(() => {
+  const platform = String(route.query.platform || "all");
+  return platform === "netease" || platform === "kuwo" ? platform : "all";
+});
 
 // 获取搜索结果
 const getSearchResult = async () => {
   // 获取数据
   loading.value = true;
-  const result = await searchResult(props.keyword, 50, searchOffset.value, 1);
+  const result = await searchResult(props.keyword, 50, searchOffset.value, 1, searchPlatform.value);
   // 是否还有
   hasMore.value = result.result?.hasMore || result.result?.songCount > searchOffset.value + 50;
   // 搜索总数
@@ -69,4 +74,16 @@ const reachBottom = () => {
 onMounted(() => {
   getSearchResult();
 });
+
+watch(
+  () => [props.keyword, searchPlatform.value],
+  () => {
+    hasMore.value = true;
+    loading.value = true;
+    searchOffset.value = 0;
+    searchCount.value = 1;
+    searchResultData.value = [];
+    getSearchResult();
+  },
+);
 </script>

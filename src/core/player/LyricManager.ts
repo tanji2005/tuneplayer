@@ -1,5 +1,5 @@
 import { qqMusicMatch } from "@/api/qqmusic";
-import { songLyric, songLyricTTML } from "@/api/song";
+import { songLyric, songLyricBySource, songLyricTTML } from "@/api/song";
 import { keywords as defaultKeywords, regexes as defaultRegexes } from "@/assets/data/exclude";
 import { useCacheManager } from "@/core/resource/CacheManager";
 import { useMusicStore, useSettingStore, useStatusStore, useStreamingStore } from "@/stores";
@@ -355,7 +355,9 @@ class LyricManager {
         }
       }
       if (!data) {
-        data = await songLyric(id);
+        data = song.sourcePlatform
+          ? await songLyricBySource(id, song.sourcePlatform)
+          : await songLyric(id);
         if (data && data.code === 200) {
           this.saveRawLyricCache(id, "lrc", JSON.stringify(data));
         }

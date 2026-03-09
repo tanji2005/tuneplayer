@@ -37,7 +37,7 @@ export default {
       "@": resolve(__dirname, "src/"),
       "@emi": resolve(__dirname, "../native/external-media-integration"),
       "@shared": resolve(__dirname, "src/types/shared"),
-      "@opencc": resolve(__dirname, "../native/ferrous-opencc-wasm/pkg"),
+      "@opencc": resolve(__dirname, "src/shims/opencc"),
       "@native": resolve(__dirname, "../native"),
     },
   },
